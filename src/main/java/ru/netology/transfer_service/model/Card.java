@@ -8,6 +8,7 @@ public class Card {
     private AmountCard amount;
 
     public Card(String cardFromNumber, String cardFromValidTill, String cardFromCVV, AmountCard amount) {
+
         this.cardFromNumber = cardFromNumber;
         this.cardFromValidTill = cardFromValidTill;
         this.cardFromCVV = cardFromCVV;

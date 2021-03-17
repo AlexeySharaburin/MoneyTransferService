@@ -1,20 +1,22 @@
 package ru.netology.transfer_service.model;
 
+import java.math.BigDecimal;
+
 public class AmountCard {
 
-    private double value;
+    private BigDecimal value;
     private String currency;
 
-    public AmountCard(double value, String currency) {
+    public AmountCard(BigDecimal value, String currency) {
         this.value = value;
         this.currency = currency;
     }
 
-    public double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 

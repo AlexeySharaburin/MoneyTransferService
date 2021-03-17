@@ -20,9 +20,9 @@ public class MoneyTransferController {
     @PostMapping("/transfer/{id}")
     public ResponseEntity<String> transfer(@RequestBody TransferData transferData, @PathVariable long id) {
         if (moneyTransferService.transfer(transferData) != null) {
-            return new ResponseEntity<> (moneyTransferService.transfer(transferData), HttpStatus.OK);
+            return new ResponseEntity<>(moneyTransferService.transfer(transferData), HttpStatus.OK);
         }
-        return new ResponseEntity<> ("Перевод совершить не удалось. Попробуйте ещё раз.", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Перевод совершить не удалось. Попробуйте ещё раз.", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/confirmOperation/{id}")

@@ -5,8 +5,6 @@ import ru.netology.transfer_service.model.TransferData;
 import ru.netology.transfer_service.model.Verification;
 import ru.netology.transfer_service.repository.MoneyTransferRepository;
 
-import javax.xml.crypto.Data;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -30,7 +28,11 @@ public class MoneyTransferService {
     }
 
     public boolean confirmOperation(Verification verification) {
-        return moneyTransferRepository.confirmOperation(verification);
+
+        if (verification.getCode().equals(verification.getCode())) {
+            return moneyTransferRepository.confirmOperation(verification);
+        }
+        return false;
     }
 
 
