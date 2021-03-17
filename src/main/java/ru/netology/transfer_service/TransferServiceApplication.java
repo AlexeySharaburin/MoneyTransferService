@@ -12,6 +12,9 @@ import java.util.Date;
 @SpringBootApplication
 public class TransferServiceApplication {
 
+    public static final String nameLog = "file.log";
+    public static final String time = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(new Date());
+
     public static void main(String[] args) {
         SpringApplication.run(TransferServiceApplication.class, args);
         System.out.println("\nWelcome to MoneyTransferService!");
@@ -22,8 +25,8 @@ public class TransferServiceApplication {
     public static void createFiles() {
 
         String msgLog = "Файл file.log успешно создан";
-        String nameLog = "file.log";
-        String time = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(new Date());
+//        String nameLog = "file.log";
+//        String time = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(new Date());
 
 
         File logFile = new File(nameLog);

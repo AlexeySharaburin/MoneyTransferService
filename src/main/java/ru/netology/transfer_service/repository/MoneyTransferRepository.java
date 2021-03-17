@@ -1,10 +1,8 @@
 package ru.netology.transfer_service.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.netology.transfer_service.model.Amount;
-import ru.netology.transfer_service.model.Card;
-import ru.netology.transfer_service.model.TransferData;
-import ru.netology.transfer_service.model.Verification;
+import ru.netology.transfer_service.TransferServiceApplication;
+import ru.netology.transfer_service.model.*;
 
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
@@ -21,73 +19,85 @@ public class MoneyTransferRepository {
     final private Map<String, String> operationsRepository = new ConcurrentHashMap<>();
     final private AtomicInteger id = new AtomicInteger(0);
 
-    String nameLog = "file.log";
-    String time = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(new Date());
+    Card currentCard;
+    double transferValue;
+    double currentCardValue;
+    String operationId = null;
+    String cardToNumber;
+    String currency;
+
+//    String nameLog = "file.log";
+//    String time = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(new Date());
 
 
-    public boolean transfer(TransferData transferData) {
+    public String transfer(TransferData transferData) {
 
         for (Map.Entry<String, Card> cardRepoEntry : cardsRepository.entrySet()) {
 
             if (transferData.getCardFromNumber().equals(cardRepoEntry.getKey())) {
 
-                Card currentCard = cardRepoEntry.getValue();
+                currentCard = cardRepoEntry.getValue();
+
+                currency = transferData.getAmount().getCurrency();
+                cardToNumber = transferData.getCardToNumber();
 
                 if ((currentCard.getCardFromCVV().equals(transferData.getCardFromCVV())) || (currentCard.getCardFromValidTill().equals(transferData.getCardFromValidTill()))) {
 
-                    int currentCardValue = currentCard.getAmount().getValue();
-                    int transferValue = transferData.getAmount().getValue();
+                    currentCardValue = currentCard.getAmountCard().getValue();
 
-                    if ((currentCardValue - transferValue) > 0) {
+                    transferValue = transferData.getAmount().getValue();
 
-                        currentCardValue -= transferValue;
+                    if ((currentCardValue - transferValue) > 0.01) {
 
-                        String fee = String.format("%.2f", transferValue * 0.01);
+                        operationId = "Operation_" + id.getAndIncrement();
 
-                        currentCard.setAmount(new Amount(currentCardValue, currentCard.getAmount().getCurrency()));
-
-                        cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
-
-                        String operationId = "Operation_" + id.getAndIncrement();
-
-                        String operationLog = "Время операции: "
-                                + time + " "
-                                + ", ID операции: "
-                                + operationId + " "
-                                + ", карта списания: "
-                                + currentCard.getCardFromNumber() + " "
-                                + ", карта зачисления: "
-                                + transferData.getCardToNumber() + " "
-                                + ", сумма перевода: "
-                                + transferValue + " "
-                                + ", валюта перевода: "
-                                + transferData.getAmount().getCurrency() + " "
-                                + ", комиссия в валюте перевода: "
-                                + fee + " "
-                                + ", результат: перевод прошёл удачно!\n";
-
-
-                        operationsRepository.put(operationId, operationLog);
-
-                        System.out.println(operationLog);
-
-                        try (FileWriter writerLogs = new FileWriter(nameLog, true)) {
-                            writerLogs.write(operationLog);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        return true;
                     }
-
                 }
             }
         }
-        return false;
+        return operationId;
     }
 
+
     public boolean confirmOperation(Verification verification) {
-        if (verification.getCode().equals(verification.getOperationID())) {
+
+        if (verification.getOperationID().equals(operationId)) {
+
+            currentCardValue -= transferValue * 1.01;
+
+            String fee = String.format("%.2f", transferValue * 0.01);
+
+            currentCard.setAmountCard(new AmountCard(currentCardValue, currentCard.getAmountCard().getCurrency()));
+
+            cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
+
+            String operationLog = "Время операции: "
+                    + TransferServiceApplication.time + " "
+                    + ", ID операции: "
+                    + operationId + " "
+                    + ", карта списания: "
+                    + currentCard.getCardFromNumber() + " "
+                    + ", карта зачисления: "
+                    + cardToNumber + " "
+                    + ", сумма перевода: "
+                    + transferValue + " "
+                    + ", валюта перевода: "
+                    + currency + " "
+                    + ", комиссия в валюте перевода: "
+                    + fee + " "
+                    + ", остаток на карте списания, руб.: "
+                    + currentCardValue;
+
+
+            operationsRepository.put(operationId, operationLog);
+
+            System.out.println(operationLog);
+
+            try (FileWriter writerLogs = new FileWriter(TransferServiceApplication.nameLog, true)) {
+                writerLogs.write(operationLog);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return true;
         }
         return false;

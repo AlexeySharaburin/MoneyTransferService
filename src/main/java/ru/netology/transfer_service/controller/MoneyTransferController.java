@@ -19,8 +19,8 @@ public class MoneyTransferController {
 
     @PostMapping("/transfer/{id}")
     public ResponseEntity<String> transfer(@RequestBody TransferData transferData, @PathVariable long id) {
-        if (moneyTransferService.transfer(transferData)) {
-            return new ResponseEntity<> ("Поздравляем! Деньги успешно переведены!", HttpStatus.OK);
+        if (moneyTransferService.transfer(transferData) != null) {
+            return new ResponseEntity<> (moneyTransferService.transfer(transferData), HttpStatus.OK);
         }
         return new ResponseEntity<> ("Перевод совершить не удалось. Попробуйте ещё раз.", HttpStatus.BAD_REQUEST);
     }
