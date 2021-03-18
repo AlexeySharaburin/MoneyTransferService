@@ -2,6 +2,8 @@ package ru.netology.transfer_service.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.netology.transfer_service.TransferServiceApplication;
+import ru.netology.transfer_service.exception.ErrorInputData;
+import ru.netology.transfer_service.exception.ErrorTransfer;
 import ru.netology.transfer_service.model.*;
 
 import java.io.FileWriter;
@@ -16,10 +18,10 @@ public class MoneyTransferRepository {
 
     final private Map<String, Card> cardsRepository = new ConcurrentHashMap<>();
     final private Map<String, DataOperation> operationsRepository = new ConcurrentHashMap<>();
-    final private AtomicInteger id = new AtomicInteger(0);
+    final private AtomicInteger idNumber = new AtomicInteger(0);
 
 
-    public String transfer(TransferData transferData) {
+    public String transfer(TransferData transferData, long id) {
 
         String operationId = null;
 
@@ -43,13 +45,15 @@ public class MoneyTransferRepository {
 
                     if (newCardValue.compareTo(BigDecimal.valueOf(0.01).setScale(2, RoundingMode.CEILING)) > 0) {
 
-                        operationId = "Operation_" + id.getAndIncrement();
+                        operationId = "Operation_" + idNumber.getAndIncrement();
 
                         DataOperation dataNewOperation = new DataOperation(currentCard, cardToNumber, transferValue, newCardValue, fee);
 
                         operationsRepository.put(operationId, dataNewOperation);
 
                     }
+                } else {
+                    throw new ErrorInputData("User %d: Ошибка ввода данных карты" + id);
                 }
             }
         }
@@ -58,7 +62,7 @@ public class MoneyTransferRepository {
     }
 
 
-    public boolean confirmOperation(Verification verification) {
+    public boolean confirmOperation(Verification verification, long id) {
 
         for (Map.Entry<String, DataOperation> dataOperationEntry : operationsRepository.entrySet()) {
 
@@ -107,6 +111,9 @@ public class MoneyTransferRepository {
                     e.printStackTrace();
                 }
                 return true;
+
+            } else {
+                throw new ErrorTransfer("Клиент %d: Перевод не состоялся" + id);
             }
         }
         return false;

@@ -1,6 +1,8 @@
 package ru.netology.transfer_service.service;
 
 import org.springframework.stereotype.Service;
+import ru.netology.transfer_service.exception.ErrorConfirmation;
+import ru.netology.transfer_service.exception.ErrorInputData;
 import ru.netology.transfer_service.model.TransferData;
 import ru.netology.transfer_service.model.Verification;
 import ru.netology.transfer_service.repository.MoneyTransferRepository;
@@ -18,21 +20,23 @@ public class MoneyTransferService {
         this.moneyTransferRepository = moneyTransferRepository;
     }
 
-    public String transfer(TransferData transferData) {
-        String serviceTransfer = null;
+    public String transfer(TransferData transferData, long id) {
+        String serviceTransfer;
         String cardValidTill = transferData.getCardFromValidTill();
         if (validateCardDate(cardValidTill)) {
-            serviceTransfer = moneyTransferRepository.transfer(transferData);
+            serviceTransfer = moneyTransferRepository.transfer(transferData, id);
+        } else {
+            throw new ErrorInputData("User %d: Срок действия вашей карты истёк" + id);
         }
         return serviceTransfer;
     }
 
-    public boolean confirmOperation(Verification verification) {
-
+    public boolean confirmOperation(Verification verification, long id) {
         if (verification.getCode().equals(verification.getCode())) {
-            return moneyTransferRepository.confirmOperation(verification);
+            return moneyTransferRepository.confirmOperation(verification, id);
+        } else {
+            throw new ErrorConfirmation("Клиент %d: Ошибка подтверждения" + id);
         }
-        return false;
     }
 
 
