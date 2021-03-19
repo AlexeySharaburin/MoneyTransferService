@@ -44,7 +44,8 @@ public class MoneyTransferService {
         String operationId = null;
         for (Map.Entry<String, String> verificationEntry : verificationRepository.entrySet()) {
             if (verification.getCode().equals(verificationEntry.getKey())) {
-                operationId = moneyTransferRepository.confirmOperation(verification);
+                operationId = verificationEntry.getValue();
+                moneyTransferRepository.confirmOperation(operationId);
             } else {
                 throw new ErrorConfirmation("Ошибка подтверждения");
             }

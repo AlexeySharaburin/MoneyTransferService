@@ -62,13 +62,13 @@ public class MoneyTransferRepository {
     }
 
 
-    public String confirmOperation(Verification verification) {
+    public String confirmOperation(String transferServiceOperationId) {
 
         String operationId = null;
 
         for (Map.Entry<String, DataOperation> dataOperationEntry : operationsRepository.entrySet()) {
 
-            if (verification.getOperationID().equals(dataOperationEntry.getKey())) {
+            if (transferServiceOperationId.equals(dataOperationEntry.getKey())) {
 
                 operationId = dataOperationEntry.getKey();
 
