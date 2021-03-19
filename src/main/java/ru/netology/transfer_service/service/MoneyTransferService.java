@@ -3,40 +3,51 @@ package ru.netology.transfer_service.service;
 import org.springframework.stereotype.Service;
 import ru.netology.transfer_service.exception.ErrorConfirmation;
 import ru.netology.transfer_service.exception.ErrorInputData;
+import ru.netology.transfer_service.model.Card;
 import ru.netology.transfer_service.model.TransferData;
 import ru.netology.transfer_service.model.Verification;
 import ru.netology.transfer_service.repository.MoneyTransferRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class MoneyTransferService {
 
 
     private final MoneyTransferRepository moneyTransferRepository;
+    public final static Map<String, String> verificationRepository = new ConcurrentHashMap<>();
 
     public MoneyTransferService(MoneyTransferRepository moneyTransferRepository) {
         this.moneyTransferRepository = moneyTransferRepository;
     }
 
-    public String transfer(TransferData transferData, long id) {
-        String serviceTransfer;
+    public String transfer(TransferData transferData) {
+        String operationId;
+        String code = generateCode();
         String cardValidTill = transferData.getCardFromValidTill();
         if (validateCardDate(cardValidTill)) {
-            serviceTransfer = moneyTransferRepository.transfer(transferData, id);
+            operationId = moneyTransferRepository.transfer(transferData);
+            verificationRepository.put(code, operationId);
         } else {
-            throw new ErrorInputData("User %d: Срок действия вашей карты истёк" + id);
+            throw new ErrorInputData("Срок действия вашей карты истёк");
         }
-        return serviceTransfer;
+        return operationId;
     }
 
-    public boolean confirmOperation(Verification verification, long id) {
-        if (verification.getCode().equals(verification.getCode())) {
-            return moneyTransferRepository.confirmOperation(verification, id);
-        } else {
-            throw new ErrorConfirmation("Клиент %d: Ошибка подтверждения" + id);
+    public String confirmOperation(Verification verification) {
+        String operationId = null;
+        for (Map.Entry<String, String> verificationEntry : verificationRepository.entrySet()) {
+            if (verification.getCode().equals(verificationEntry.getKey())) {
+                operationId = moneyTransferRepository.confirmOperation(verification);
+            } else {
+                throw new ErrorConfirmation("Ошибка подтверждения");
+            }
         }
+        return operationId;
     }
 
 
@@ -57,6 +68,12 @@ public class MoneyTransferService {
             return true;
         }
         return false;
+    }
+
+    public static String generateCode() {
+        Random random = new Random();
+        int codeInt = random.nextInt(999) + 1000;
+        return String.valueOf(codeInt);
     }
 
 

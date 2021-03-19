@@ -2,12 +2,17 @@ package ru.netology.transfer_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import ru.netology.transfer_service.model.AmountCard;
+import ru.netology.transfer_service.model.Card;
+import ru.netology.transfer_service.repository.MoneyTransferRepository;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 @SpringBootApplication
 public class TransferServiceApplication {
@@ -19,6 +24,7 @@ public class TransferServiceApplication {
         SpringApplication.run(TransferServiceApplication.class, args);
         System.out.println("\nWelcome to MoneyTransferService!");
         createFiles();
+        addCards();
 
     }
 
@@ -31,19 +37,40 @@ public class TransferServiceApplication {
 
         File logFile = new File(nameLog);
 
-        try {
-            if (logFile.createNewFile())
-                System.out.println(msgLog);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        if (!logFile.exists()) {
 
-        try (FileWriter writerLogs = new FileWriter(nameLog, true)) {
-            writerLogs.write(time + ": " + msgLog + "\n");
+            try {
+                if (logFile.createNewFile())
+                    System.out.println(msgLog);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            try (FileWriter writerLogs = new FileWriter(nameLog, true)) {
+                writerLogs.write(time + ": " + msgLog + "\n");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public static void addCards() {
+        MoneyTransferRepository.cardsRepository.put("1111111111111111",
+                new Card("1111111111111111",
+                        "1121",
+                        "111",
+                        new AmountCard(BigDecimal.valueOf(203_345.15), "RUR")));
+        MoneyTransferRepository.cardsRepository.put("1111111111111112",
+                new Card("1111111111111112",
+                        "1122",
+                        "112",
+                        new AmountCard(BigDecimal.valueOf(345.15), "RUR")));
+        MoneyTransferRepository.cardsRepository.put("1111111111111113",
+                new Card("1111111111111113",
+                        "1123",
+                        "113",
+                        new AmountCard(BigDecimal.valueOf(203_345_111.15), "RUR")));
     }
 
 }

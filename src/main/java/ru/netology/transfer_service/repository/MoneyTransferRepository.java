@@ -16,12 +16,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Repository
 public class MoneyTransferRepository {
 
-    final private Map<String, Card> cardsRepository = new ConcurrentHashMap<>();
+    public final static Map<String, Card> cardsRepository = new ConcurrentHashMap<>();
     final private Map<String, DataOperation> operationsRepository = new ConcurrentHashMap<>();
     final private AtomicInteger idNumber = new AtomicInteger(0);
 
 
-    public String transfer(TransferData transferData, long id) {
+    public String transfer(TransferData transferData) {
 
         String operationId = null;
 
@@ -33,7 +33,7 @@ public class MoneyTransferRepository {
 
                 String cardToNumber = transferData.getCardToNumber();
 
-                if ((currentCard.getCardFromCVV().equals(transferData.getCardFromCVV())) || (currentCard.getCardFromValidTill().equals(transferData.getCardFromValidTill()))) {
+                if (!(currentCard.getCardFromNumber().equals(cardToNumber)) || (currentCard.getCardFromCVV().equals(transferData.getCardFromCVV())) || (currentCard.getCardFromValidTill().equals(transferData.getCardFromValidTill()))) {
 
                     BigDecimal currentCardValue = currentCard.getAmountCard().getValue().setScale(2, RoundingMode.CEILING);
 
@@ -41,19 +41,19 @@ public class MoneyTransferRepository {
 
                     BigDecimal fee = transferValue.multiply(BigDecimal.valueOf(0.01)).setScale(2, RoundingMode.CEILING);
 
-                    BigDecimal newCardValue = (currentCardValue.subtract(transferValue.multiply(BigDecimal.valueOf(1.01)))).setScale(2, RoundingMode.CEILING);
+                    BigDecimal newValueCardFrom = (currentCardValue.subtract(transferValue.multiply(BigDecimal.valueOf(1.01)))).setScale(2, RoundingMode.CEILING);
 
-                    if (newCardValue.compareTo(BigDecimal.valueOf(0.01).setScale(2, RoundingMode.CEILING)) > 0) {
+                    if (newValueCardFrom.compareTo(BigDecimal.valueOf(0.01).setScale(2, RoundingMode.CEILING)) > 0) {
 
                         operationId = "Operation_" + idNumber.getAndIncrement();
 
-                        DataOperation dataNewOperation = new DataOperation(currentCard, cardToNumber, transferValue, newCardValue, fee);
+                        DataOperation dataNewOperation = new DataOperation(currentCard, cardToNumber, transferValue, newValueCardFrom, fee);
 
                         operationsRepository.put(operationId, dataNewOperation);
 
                     }
                 } else {
-                    throw new ErrorInputData("User %d: Ошибка ввода данных карты" + id);
+                    throw new ErrorInputData("Ошибка ввода данных карты");
                 }
             }
         }
@@ -62,14 +62,15 @@ public class MoneyTransferRepository {
     }
 
 
-    public boolean confirmOperation(Verification verification, long id) {
+    public String confirmOperation(Verification verification) {
+
+        String operationId = null;
 
         for (Map.Entry<String, DataOperation> dataOperationEntry : operationsRepository.entrySet()) {
 
-
             if (verification.getOperationID().equals(dataOperationEntry.getKey())) {
 
-                String operationId = dataOperationEntry.getKey();
+                operationId = dataOperationEntry.getKey();
 
                 Card currentCard = dataOperationEntry.getValue().getCard();
 
@@ -110,12 +111,12 @@ public class MoneyTransferRepository {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                return true;
 
             } else {
-                throw new ErrorTransfer("Клиент %d: Перевод не состоялся" + id);
+                throw new ErrorTransfer("Перевод не состоялся");
             }
         }
-        return false;
+
+        return operationId;
     }
 }

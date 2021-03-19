@@ -20,35 +20,40 @@ public class MoneyTransferController {
         this.moneyTransferService = moneyTransferService;
     }
 
-    @PostMapping("/transfer/{id}")
-    public ResponseEntity<String> transfer(@RequestBody TransferData transferData, @PathVariable long id) {
-        if (moneyTransferService.transfer(transferData, id) != null) {
-            return new ResponseEntity<>(moneyTransferService.transfer(transferData, id), HttpStatus.OK);
+    @PostMapping("/transfer")
+    public ResponseEntity<String> transfer(@RequestBody TransferData transferData) {
+        if (moneyTransferService.transfer(transferData) != null) {
+            return new ResponseEntity<>(moneyTransferService.transfer(transferData), HttpStatus.OK);
         }
         return new ResponseEntity<>("Перевод совершить не удалось. Попробуйте ещё раз.", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/confirmOperation/{id}")
-    public boolean confirmOperation(@RequestBody Verification verification, @PathVariable long id) {
-        return moneyTransferService.confirmOperation(verification, id);
+    @PostMapping("/confirmOperation")
+    public ResponseEntity<String> confirmOperation(@RequestBody Verification verification) {
+        if (moneyTransferService.confirmOperation(verification) != null) {
+            return new ResponseEntity<>(moneyTransferService.confirmOperation(verification), HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Перевод совершить не удалось. Попробуйте ещё раз.", HttpStatus.BAD_REQUEST);
+
     }
 
+
     @ExceptionHandler(ErrorInputData.class)
-    public ResponseEntity<String> handleErrorInputData(@PathVariable long id) {
-        System.out.println("Error input data for user %d" + id);
-        return new ResponseEntity<>("Error input data for user %d" + id, HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<String> handleErrorInputData(ErrorInputData e) {
+        System.out.println("Error input data");
+        return new ResponseEntity<>("Error input data" + e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(ErrorConfirmation.class)
-    public ResponseEntity<String> handleErrorConfirmation(@PathVariable long id) {
-        System.out.println("Error confirmation for user %d" + id);
-        return new ResponseEntity<>("Error confirmation for user %d" + id, HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> handleErrorConfirmation(ErrorConfirmation e) {
+        System.out.println("Error confirmation");
+        return new ResponseEntity<>("Error confirmation" + e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ErrorTransfer.class)
-    public ResponseEntity<String> handleErrorTransfer(@PathVariable long id) {
-        System.out.println("Error transfer for user %d" + id);
-        return new ResponseEntity<>("Error transfer for user %d" + id, HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> handleErrorTransfer(ErrorTransfer e) {
+        System.out.println("Error transfer");
+        return new ResponseEntity<>("Error transfer" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
