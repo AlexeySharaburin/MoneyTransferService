@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.netology.transfer_service.exception.ErrorConfirmation;
 import ru.netology.transfer_service.exception.ErrorInputData;
 import ru.netology.transfer_service.exception.ErrorTransfer;
+import ru.netology.transfer_service.model.ExceptionResponse;
+import ru.netology.transfer_service.model.OperationIdResponse;
 import ru.netology.transfer_service.model.TransferData;
 import ru.netology.transfer_service.model.Verification;
 import ru.netology.transfer_service.service.MoneyTransferService;
@@ -21,39 +23,48 @@ public class MoneyTransferController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<String> transfer(@RequestBody TransferData transferData) {
-        if (moneyTransferService.transfer(transferData) != null) {
-            return new ResponseEntity<>(moneyTransferService.transfer(transferData), HttpStatus.OK);
+    public ResponseEntity<OperationIdResponse> transfer(@RequestBody TransferData transferData) {
+        String operationId = moneyTransferService.transfer(transferData);
+        if (operationId != null) {
+            System.out.println("Transfer is ready!");
+            return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Перевод совершить не удалось. Попробуйте ещё раз.", HttpStatus.BAD_REQUEST);
+        System.out.println("Transfer is not ready!");
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/confirmOperation")
-    public ResponseEntity<String> confirmOperation(@RequestBody Verification verification) {
-        if (moneyTransferService.confirmOperation(verification) != null) {
-            return new ResponseEntity<>(moneyTransferService.confirmOperation(verification), HttpStatus.OK);
+    public ResponseEntity<OperationIdResponse> confirmOperation(@RequestBody Verification verification) {
+        String operationId = moneyTransferService.confirmOperation(verification);
+        if (operationId != null) {
+            System.out.println("Operation is confirmed!");
+            return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Перевод совершить не удалось. Попробуйте ещё раз.", HttpStatus.BAD_REQUEST);
-
+        System.out.println("Operation was cancelled!");
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler(ErrorInputData.class)
-    public ResponseEntity<String> handleErrorInputData(ErrorInputData e) {
-        System.out.println("Error input data");
-        return new ResponseEntity<>("Error input data" + e.getMessage(), HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(ErrorConfirmation.class)
-    public ResponseEntity<String> handleErrorConfirmation(ErrorConfirmation e) {
-        System.out.println("Error confirmation");
-        return new ResponseEntity<>("Error confirmation" + e.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<ExceptionResponse> handleErrorInputData(ErrorInputData e) {
+        String msgInput = "Error input data";
+        System.out.println(msgInput);
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), 400), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(ErrorTransfer.class)
-    public ResponseEntity<String> handleErrorTransfer(ErrorTransfer e) {
-        System.out.println("Error transfer");
-        return new ResponseEntity<>("Error transfer" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ExceptionResponse> handleErrorTransfer(ErrorTransfer e) {
+        String msgTransfer = "Error transfer";
+        System.out.println(msgTransfer);
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(ErrorConfirmation.class)
+    public ResponseEntity<ExceptionResponse> handleErrorConfirmation(ErrorConfirmation e) {
+        String msgConfirmation = "Error confirmation";
+        System.out.println(msgConfirmation);
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), 500), HttpStatus.NOT_FOUND);
+    }
+
 
 }

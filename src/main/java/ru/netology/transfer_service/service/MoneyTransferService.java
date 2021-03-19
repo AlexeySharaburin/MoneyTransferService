@@ -19,6 +19,7 @@ public class MoneyTransferService {
 
 
     private final MoneyTransferRepository moneyTransferRepository;
+
     public final static Map<String, String> verificationRepository = new ConcurrentHashMap<>();
 
     public MoneyTransferService(MoneyTransferRepository moneyTransferRepository) {
@@ -32,6 +33,7 @@ public class MoneyTransferService {
         if (validateCardDate(cardValidTill)) {
             operationId = moneyTransferRepository.transfer(transferData);
             verificationRepository.put(code, operationId);
+            sendCodeToPhone(code);
         } else {
             throw new ErrorInputData("Срок действия вашей карты истёк");
         }
@@ -74,6 +76,10 @@ public class MoneyTransferService {
         Random random = new Random();
         int codeInt = random.nextInt(999) + 1000;
         return String.valueOf(codeInt);
+    }
+
+    public void sendCodeToPhone(String code) {
+        System.out.println("Code -> " + code);
     }
 
 
