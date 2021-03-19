@@ -33,7 +33,7 @@ public class MoneyTransferRepository {
 
                 String cardToNumber = transferData.getCardToNumber();
 
-                if (!(currentCard.getCardFromNumber().equals(cardToNumber)) || (currentCard.getCardFromCVV().equals(transferData.getCardFromCVV())) || (currentCard.getCardFromValidTill().equals(transferData.getCardFromValidTill()))) {
+                if (!(currentCard.getCardFromNumber().equals(cardToNumber)) && (currentCard.getCardFromCVV().equals(transferData.getCardFromCVV())) && (currentCard.getCardFromValidTill().equals(transferData.getCardFromValidTill()))) {
 
                     BigDecimal currentCardValue = currentCard.getAmountCard().getValue().setScale(2, RoundingMode.CEILING);
 
@@ -78,11 +78,11 @@ public class MoneyTransferRepository {
 
                 BigDecimal transferValue = dataOperationEntry.getValue().getTransferValue();
 
-                BigDecimal newCardValue = dataOperationEntry.getValue().getValue();
+                BigDecimal newValueCardFrom = dataOperationEntry.getValue().getValue();
 
                 BigDecimal fee = dataOperationEntry.getValue().getFee();
 
-                currentCard.setAmountCard(new AmountCard(newCardValue, currentCard.getAmountCard().getCurrency()));
+                currentCard.setAmountCard(new AmountCard(newValueCardFrom, currentCard.getAmountCard().getCurrency()));
 
                 cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
 
@@ -101,7 +101,7 @@ public class MoneyTransferRepository {
                         + ", комиссия в валюте перевода: "
                         + fee + " "
                         + ", остаток на карте списания, руб.: "
-                        + newCardValue;
+                        + newValueCardFrom;
 
 
                 System.out.println(operationLog);

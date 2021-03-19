@@ -64,11 +64,13 @@ public class MoneyTransferService {
             e.printStackTrace();
         }
         Date todaysDate = new Date();
-        long diffDate = cardDate.getTime() - todaysDate.getTime();
-        int month = Integer.parseInt(cardValdTill.substring(0, 2));
+        if (cardDate != null) {
+            long diffDate = cardDate.getTime() - todaysDate.getTime();
+            int month = Integer.parseInt(cardValdTill.substring(0, 2));
 
-        if ((diffDate >= 0) && (month > 0) && (month < 13)) {
-            return true;
+            if ((diffDate >= 0) && (month > 0) && (month < 13)) {
+                return true;
+            }
         }
         return false;
     }
