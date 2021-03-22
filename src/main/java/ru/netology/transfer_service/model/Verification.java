@@ -1,20 +1,20 @@
 package ru.netology.transfer_service.model;
 
 public class Verification {
-    private String operationID;
+    private String operationId;
     private String code;
 
-    public Verification(String operationID, String code) {
-        this.operationID = operationID;
+    public Verification(String operationId, String code) {
+        this.operationId = operationId;
         this.code = code;
     }
 
-    public String getOperationID() {
-        return operationID;
+    public String getOperationId() {
+        return operationId;
     }
 
-    public void setOperationID(String operationID) {
-        this.operationID = operationID;
+    public void setOperationId(String operationId) {
+        this.operationId = operationId;
     }
 
     public String getCode() {
@@ -28,7 +28,7 @@ public class Verification {
     @Override
     public String toString() {
         return "Verification{" +
-                "operationID='" + operationID + '\'' +
+                "operationID='" + operationId + '\'' +
                 ", code='" + code + '\'' +
                 '}';
     }

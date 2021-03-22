@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  app:
+    image: transfer_service_docker:1.0
+    build:
+      ./
+    ports:
+      - 5500
+
+#  app1:
+#    image: my_app_docker_new:1.0
+#    build:
+#      ./
+#    ports:
+#      - 5500
+

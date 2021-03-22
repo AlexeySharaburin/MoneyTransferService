@@ -3,7 +3,6 @@ package ru.netology.transfer_service.service;
 import org.springframework.stereotype.Service;
 import ru.netology.transfer_service.exception.ErrorConfirmation;
 import ru.netology.transfer_service.exception.ErrorInputData;
-import ru.netology.transfer_service.model.Card;
 import ru.netology.transfer_service.model.TransferData;
 import ru.netology.transfer_service.model.Verification;
 import ru.netology.transfer_service.repository.MoneyTransferRepository;
@@ -16,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class MoneyTransferService {
-
 
     private final MoneyTransferRepository moneyTransferRepository;
 
@@ -32,7 +30,7 @@ public class MoneyTransferService {
         String cardValidTill = transferData.getCardFromValidTill();
         if (validateCardDate(cardValidTill)) {
             operationId = moneyTransferRepository.transfer(transferData);
-            verificationRepository.put(code, operationId);
+            verificationRepository.put(operationId, code);
             sendCodeToPhone(code);
         } else {
             throw new ErrorInputData("Срок действия вашей карты истёк");
@@ -43,21 +41,21 @@ public class MoneyTransferService {
     public String confirmOperation(Verification verification) {
         String operationId = null;
         for (Map.Entry<String, String> verificationEntry : verificationRepository.entrySet()) {
-            if ((verification.getCode().equals(verificationEntry.getKey())) && (verification.getOperationID().equals(verificationEntry.getValue()))) {
-                operationId = verificationEntry.getValue();
-                moneyTransferRepository.confirmOperation(operationId);
-            } else {
-                throw new ErrorConfirmation("Ошибка подтверждения");
+            if (verification.getOperationId().equals(verificationEntry.getKey())) {
+                if (Integer.parseInt(verificationEntry.getValue()) > 5000) {                // Эмуляция верификации:
+                    operationId = moneyTransferRepository.confirmOperation(verification);   // если случайный код
+                } else {                                                                    // меньше или равен 5000,
+                    throw new ErrorConfirmation("Неверный код подтверждения");              // мы считаем, что клиент
+                }                                                                           // ввёл неверный пин-код.
             }
         }
         return operationId;
     }
 
-
     public boolean validateCardDate(String cardValdTill) {
         Date cardDate = null;
         SimpleDateFormat format = new SimpleDateFormat();
-        format.applyPattern("MMyy");
+        format.applyPattern("MM/yy");
         try {
             cardDate = format.parse(cardValdTill);
         } catch (Exception e) {
@@ -77,13 +75,11 @@ public class MoneyTransferService {
 
     public static String generateCode() {
         Random random = new Random();
-        int codeInt = random.nextInt(999) + 1000;
+        int codeInt = random.nextInt(8999) + 1000;
         return String.valueOf(codeInt);
     }
 
     public void sendCodeToPhone(String code) {
-        System.out.println("Code -> " + code);
+        System.out.println("Клиенту на телефон отправлен код подтвержения операции: " + code);
     }
-
-
 }
