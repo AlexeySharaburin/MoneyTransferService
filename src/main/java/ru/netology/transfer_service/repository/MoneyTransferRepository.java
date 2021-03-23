@@ -93,28 +93,27 @@ public class MoneyTransferRepository {
                 cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
 
                 String operationLog = "Время операции: "
-                        + TransferServiceApplication.time + " "
-                        + ", ID операции: "
-                        + operationId + " "
-                        + ", карта списания: "
-                        + currentCard.getCardFromNumber() + " "
-                        + ", карта зачисления: "
-                        + cardToNumber + " "
-                        + ", сумма перевода: "
-                        + transferValue + " "
-                        + ", валюта перевода: "
-                        + currentCard.getAmountCard().getCurrency() + " "
-                        + ", комиссия в валюте перевода: "
-                        + fee + " "
-                        + ", остаток на карте списания, руб.: "
-                        + newValueCardFrom
-                        + "\n";
+                        + TransferServiceApplication.time
+                        + ",\n Id операции: "
+                        + operationId
+                        + ",\n карта списания: "
+                        + currentCard.getCardFromNumber()
+                        + ",\n карта зачисления: "
+                        + cardToNumber
+                        + ",\n сумма перевода: "
+                        + transferValue
+                        + ",\n валюта перевода: "
+                        + currentCard.getAmountCard().getCurrency()
+                        + ",\n комиссия в валюте перевода: "
+                        + fee
+                        + ",\n остаток на карте списания, руб.: "
+                        + newValueCardFrom;
 
 
                 System.out.println(operationLog);
 
                 try (FileWriter writerLogs = new FileWriter(TransferServiceApplication.nameLog, true)) {
-                    writerLogs.write(operationLog);
+                    writerLogs.write(operationLog+ "\n");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

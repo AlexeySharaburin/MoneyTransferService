@@ -45,8 +45,9 @@ public class MoneyTransferService {
                 if (Integer.parseInt(verificationEntry.getValue()) > 5000) {                // Эмуляция верификации:
                     operationId = moneyTransferRepository.confirmOperation(verification);   // если случайный код
                 } else {                                                                    // меньше или равен 5000,
-                    throw new ErrorConfirmation("Неверный код подтверждения");              // мы считаем, что клиент
-                }                                                                           // ввёл неверный пин-код.
+                    System.out.println("Неверный код подтверждения");                       // мы считаем, что клиент
+                    throw new ErrorConfirmation("Неверный код подтверждения");              // ввёл неверный пин-код.
+                }
             }
         }
         return operationId;

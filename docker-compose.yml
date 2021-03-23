@@ -1,16 +1,38 @@
+Я сделал Dockerfile и образ для FRONT(card-transfer):
+#
+#    FROM node:8
+#
+#    WORKDIR /usr/src/app
+#
+#    COPY package.json ./
+#
+#    RUN npm install
+#
+#    COPY . .
+#
+#    EXPOSE 5500
+#
+#    CMD ["npm", "start"]
+#
+#  но не смог запустить контейнер на основе этого образа и создать
+#  docker-compose для REST/FRONT. При этом docker-compose только для REST
+#  запускается и работает
+
 version: "3.8"
 services:
   app:
-    image: transfer_service_docker:1.0
+    image: transfer_service_docker:latest
     build:
       ./
     ports:
-      - 5500
+      - 5500:5500
 
-#  app1:
-#    image: my_app_docker_new:1.0
-#    build:
-#      ./
-#    ports:
-#      - 5500
+  front:
+    build:
+      image: front:latest
+      build:
+        ./
+      ports:
+        - 5500:5500
+
 
