@@ -25,14 +25,14 @@ public class MoneyTransferController {
     @PostMapping("/transfer")
     public ResponseEntity<OperationIdResponse> transfer(@RequestBody TransferData transferData) {
         String operationId = moneyTransferService.transfer(transferData);
-        System.out.println("Перевод подготовлен!");
+        System.out.println("Транзакция подготовлена!");
         return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
     }
 
     @PostMapping("/confirmOperation")
     public ResponseEntity<OperationIdResponse> confirmOperation(@RequestBody Verification verification) {
         String operationId = moneyTransferService.confirmOperation(verification);
-        System.out.println("Операция подтверждена!");
+        System.out.println("Транзакция завершена успешно!!");
         return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
     }
 
@@ -58,6 +58,9 @@ public class MoneyTransferController {
     }
 
 }
+
+
+
 
 
 

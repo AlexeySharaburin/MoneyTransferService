@@ -6,9 +6,6 @@ import ru.netology.transfer_service.model.AmountCard;
 import ru.netology.transfer_service.model.Card;
 import ru.netology.transfer_service.repository.MoneyTransferRepository;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,37 +14,13 @@ import java.util.Map;
 @SpringBootApplication
 public class TransferServiceApplication {
 
-    public static final String nameLog = "fileOperatiosLogs.log";
     public static final String time = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(new Date());
 
     public static void main(String[] args) {
         SpringApplication.run(TransferServiceApplication.class, args);
         System.out.println("\nWelcome to MoneyTransferService!");
-        createFiles();
         addCards();
-
         printRepo();
-    }
-
-    public static void createFiles() {
-
-        String msgLog = "Файл fileOperatiosLogs.log успешно создан";
-        File logFile = new File(nameLog);
-
-        if (!logFile.exists()) {
-            try {
-                if (logFile.createNewFile())
-                    System.out.println(msgLog);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try (FileWriter writerLogs = new FileWriter(nameLog, true)) {
-                writerLogs.write("Время операции:" + time + ": " + msgLog + "\n");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public static void addCards() {
@@ -77,3 +50,45 @@ public class TransferServiceApplication {
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    public static void createFiles() {
+//
+//        String msgLog = "Файл fileOperatiosLogs.log успешно создан";
+//        File logFile = new File(nameLog);
+//
+//        if (!logFile.exists()) {
+//            try {
+//                if (logFile.createNewFile())
+//                    System.out.println(msgLog);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            try (FileWriter writerLogs = new FileWriter(nameLog, true)) {
+//                writerLogs.write("Время операции:" + time + ": " + msgLog + "\n");
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }

@@ -1,13 +1,13 @@
 package ru.netology.transfer_service.service;
 
 import org.springframework.stereotype.Service;
+import ru.netology.transfer_service.TransferServiceApplication;
 import ru.netology.transfer_service.exception.ErrorConfirmation;
 import ru.netology.transfer_service.exception.ErrorInputData;
-import ru.netology.transfer_service.model.DataOperation;
-import ru.netology.transfer_service.model.TransferData;
-import ru.netology.transfer_service.model.Verification;
+import ru.netology.transfer_service.model.*;
 import ru.netology.transfer_service.repository.MoneyTransferRepository;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -18,12 +18,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class MoneyTransferService {
 
-    private final MoneyTransferLogService moneyTransferLogService;
+    private final MoneyTransferLogFile moneyTransferLogFile;
     private final MoneyTransferRepository moneyTransferRepository;
+    private final MoneyTransferLogConsole moneyTransferLogConsole;
 
-    public MoneyTransferService(MoneyTransferLogService moneyTransferLogService, MoneyTransferRepository moneyTransferRepository) {
-        this.moneyTransferLogService = moneyTransferLogService;
+    public MoneyTransferService(MoneyTransferLogFile moneyTransferLogFile, MoneyTransferRepository moneyTransferRepository, MoneyTransferLogConsole moneyTransferLogConsole) {
+        this.moneyTransferLogFile = moneyTransferLogFile;
         this.moneyTransferRepository = moneyTransferRepository;
+        this.moneyTransferLogConsole = moneyTransferLogConsole;
     }
 
     public final static Map<String, DataOperation> operationsRepository = new ConcurrentHashMap<>();
@@ -60,13 +62,20 @@ public class MoneyTransferService {
     public String confirmOperation(Verification verification) {
         String operationId = verification.getOperationId();
         String logCode = "Неверный код подтверждения";
-        String logId = "Операция отклонена!";
+        String logId = "Транзакция отклонена!";
         if (verificationRepository.containsKey(operationId) && operationId != null) {
             String code = verificationRepository.get(operationId);
             if (code != null && isCodeCorrect(code)) {
                 DataOperation currentDataOperation = operationsRepository.get(operationId);
-                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId) && moneyTransferLogService.transferLog(operationId, currentDataOperation)) {
-                    System.out.println("Перевод осуществлён, данные о переводе занесены в файл");
+                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId)) {
+                    System.out.println("Транзакция подтверждена!");
+                    String operationLogs = writeStringLog(operationId, currentDataOperation);
+                    synchronized (moneyTransferLogFile) {
+                        if (moneyTransferLogFile.transferLog(operationLogs)
+                                && moneyTransferLogConsole.transferLog(operationLogs)) {
+                            System.out.println("Вся информация о транзакции передана клиенту");
+                        }
+                    }
                 } else {
                     System.out.println(logId);
                     throw new ErrorConfirmation(logId);
@@ -89,7 +98,7 @@ public class MoneyTransferService {
     }
 
     public void sendCodeToPhone(String code) {
-        System.out.println("Клиенту на телефон отправлен код подтвержения операции: " + code);
+        System.out.println("Клиенту на телефон отправлен код подтвержения транзакции: " + code);
     }
 
     // Эмуляция верификации:
@@ -119,7 +128,57 @@ public class MoneyTransferService {
         }
         return false;
     }
+
+    public static String writeStringLog(String operationId, DataOperation dataOperation) {
+
+        Card currentCard = dataOperation.getCard();
+
+        String cardToNumber = dataOperation.getCardToNumber();
+
+        BigDecimal transferValue = dataOperation.getTransferValue();
+
+        BigDecimal newValueCardFrom = dataOperation.getValue();
+
+        BigDecimal fee = dataOperation.getFee();
+
+        currentCard.setAmountCard(new AmountCard(newValueCardFrom, currentCard.getAmountCard().getCurrency()));
+
+        String operationLog = "Время транзакции: "
+                + TransferServiceApplication.time
+                + ",\n Id транзакции: "
+                + operationId
+                + ",\n карта списания: "
+                + currentCard.getCardFromNumber()
+                + ",\n карта зачисления: "
+                + cardToNumber
+                + ",\n сумма перевода: "
+                + transferValue
+                + ",\n валюта перевода: "
+                + currentCard.getAmountCard().getCurrency()
+                + ",\n комиссия в валюте перевода: "
+                + fee
+                + ",\n остаток на карте списания, руб.: "
+                + newValueCardFrom;
+
+        return operationLog;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //    public String transferMoneyServiceLog(TransferData transferData) {

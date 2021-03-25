@@ -17,7 +17,6 @@ public class MoneyTransferRepository {
     public final static Map<String, Card> cardsRepository = new ConcurrentHashMap<>();
 
     public DataOperation transfer(TransferData transferData) {
-
         Card currentCard;
         DataOperation dataNewOperation = null;
 
@@ -81,6 +80,14 @@ public class MoneyTransferRepository {
         return dataNewOperation;
     }
 }
+
+
+
+
+
+
+
+
 
 
 
