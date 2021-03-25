@@ -11,6 +11,6 @@ class MoneyTransferRepositoryTest {
     }
 
     @Test
-    void confirmOperation() {
+    void success_confirmOperation_Repository() {
     }
 }

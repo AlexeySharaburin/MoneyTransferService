@@ -1,26 +1,15 @@
 version: "3.8"
 services:
   app:
-    image: back_app
+    image: back_transfer:2.0
     ports:
       - 5500:5500
 
   front:
-      image: front_app
-#      networks:
-#        front_net:
-#          - ipv4_address: 192.168.65.25
+      image: front_transfer:2.0
       ports:
-        - 5501:5500
-#networks:
-#  front_net:
-#    driver: bridge
-#    enable_ipv6: true
-#    ipam:
-#      driver: default
-#      config:
-#        - subnet: 192.168.65.0/25
-#        - gateway: 192.168.65.25
+        - 3000:3000
+
 
 
 
