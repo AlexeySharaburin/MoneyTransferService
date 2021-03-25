@@ -25,29 +25,20 @@ public class MoneyTransferController {
     @PostMapping("/transfer")
     public ResponseEntity<OperationIdResponse> transfer(@RequestBody TransferData transferData) {
         String operationId = moneyTransferService.transfer(transferData);
-        if (operationId != null) {
-            System.out.println("Перевод подготовлен!");
-            return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
-        }
-        System.out.println("Перевод отменен!");
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        System.out.println("Перевод подготовлен!");
+        return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
     }
 
     @PostMapping("/confirmOperation")
     public ResponseEntity<OperationIdResponse> confirmOperation(@RequestBody Verification verification) {
         String operationId = moneyTransferService.confirmOperation(verification);
-        if (operationId != null) {
-            System.out.println("Операция подтверждена!");
-            return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
-        }
-        System.out.println("Операция отклонена!");
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        System.out.println("Операция подтверждена!");
+        return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
     }
-
 
     @ExceptionHandler(ErrorInputData.class)
     public ResponseEntity<ExceptionResponse> handleErrorInputData(ErrorInputData e) {
-        String msgInput = "Ошибка исходных данных";
+        String msgInput = "Ошибка ввода данных карты";
         System.out.println(msgInput);
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), 400), HttpStatus.UNAUTHORIZED);
     }
@@ -66,5 +57,40 @@ public class MoneyTransferController {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), 500), HttpStatus.NOT_FOUND);
     }
 
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    @PostMapping("/transfer")
+//    public ResponseEntity<OperationIdResponse> transfer(@RequestBody TransferData transferData) {
+//        String operationId = moneyTransferService.transfer(transferData);
+//        if (operationId != null) {
+//            System.out.println("Перевод подготовлен!");
+//            return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
+//        }
+//        System.out.println("Перевод отменен!");
+//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//    }
+//
+//    @PostMapping("/confirmOperation")
+//    public ResponseEntity<OperationIdResponse> confirmOperation(@RequestBody Verification verification) {
+//        String operationId = moneyTransferService.confirmOperation(verification);
+//        if (operationId != null) {
+//            System.out.println("Операция подтверждена!");
+//            return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
+//        }
+//        System.out.println("Операция отклонена!");
+//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//    }
