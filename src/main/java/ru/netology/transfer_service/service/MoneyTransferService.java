@@ -74,6 +74,7 @@ public class MoneyTransferService {
                         if (moneyTransferLogFile.transferLog(operationLogs)
                                 && moneyTransferLogConsole.transferLog(operationLogs)) {
                             System.out.println("Вся информация о транзакции передана клиенту");
+                            return operationId;
                         }
                     }
                 } else {
@@ -88,7 +89,7 @@ public class MoneyTransferService {
             System.out.println(logId);
             throw new ErrorConfirmation(logId);
         }
-        return operationId;
+        return null;
     }
 
     public static String generateCode() {

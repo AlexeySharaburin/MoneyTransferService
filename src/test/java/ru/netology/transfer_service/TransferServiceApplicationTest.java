@@ -1,22 +1,14 @@
 package ru.netology.transfer_service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
-
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TransferServiceApplicationTest {
@@ -51,9 +43,6 @@ public class TransferServiceApplicationTest {
 
         System.out.println("\nPort MoneyTransferService: " + port_back);
         System.out.println(forEntity_back_app.getBody());
-//        String msgExpected1 = "";
-//        String msg1 = forEntity1.getBody();
-//        System.out.println("Контейнер back_transfer:3.0 работает?");
         Assertions.assertTrue(back_app.isRunning());
     }
 
@@ -65,9 +54,6 @@ public class TransferServiceApplicationTest {
 
         System.out.println("\nPort MoneyTransferService: " + port_front);
         System.out.println(forEntity_front_app.getBody());
-//        String msgExpected1 = "";
-//        String msg1 = forEntity1.getBody();
-//        Assertions.assertEquals(msg1, msgExpected1);
         Assertions.assertTrue(front_app.isRunning());
     }
 
