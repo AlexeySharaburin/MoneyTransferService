@@ -28,12 +28,12 @@ public class MoneyTransferService {
         this.moneyTransferLogConsole = moneyTransferLogConsole;
     }
 
-    public final static Map<String, DataOperation> operationsRepository = new ConcurrentHashMap<>();
+    public final Map<String, DataOperation> operationsRepository = new ConcurrentHashMap<>();
     final private AtomicInteger idNumber = new AtomicInteger(1);
-    public final static Map<String, String> verificationRepository = new ConcurrentHashMap<>();
+    public final Map<String, String> verificationRepository = new ConcurrentHashMap<>();
 
 
-    public String transfer(TransferData transferData) {
+    public String transfer(TransferData transferData, Map<String, DataOperation> operationsRepository, Map<String, String> verificationRepository) {
         String operationId;
         String code = generateCode();
         String logData = "Ошибка ввода данных карты";
@@ -59,7 +59,7 @@ public class MoneyTransferService {
         return operationId;
     }
 
-    public String confirmOperation(Verification verification) {
+    public String confirmOperation(Verification verification, Map<String, DataOperation> operationsRepository, Map<String, String> verificationRepository) {
         String operationId = verification.getOperationId();
         String logCode = "Неверный код подтверждения";
         String logId = "Транзакция отклонена!";
@@ -74,7 +74,6 @@ public class MoneyTransferService {
                         if (moneyTransferLogFile.transferLog(operationLogs)
                                 && moneyTransferLogConsole.transferLog(operationLogs)) {
                             System.out.println("Вся информация о транзакции передана клиенту");
-                            return operationId;
                         }
                     }
                 } else {
@@ -89,7 +88,7 @@ public class MoneyTransferService {
             System.out.println(logId);
             throw new ErrorConfirmation(logId);
         }
-        return null;
+        return operationId;
     }
 
     public static String generateCode() {
@@ -98,8 +97,10 @@ public class MoneyTransferService {
         return String.valueOf(codeInt);
     }
 
-    public void sendCodeToPhone(String code) {
-        System.out.println("Клиенту на телефон отправлен код подтвержения транзакции: " + code);
+    public static String sendCodeToPhone(String code) {
+        String msg = "Клиенту на телефон отправлен код подтвержения транзакции: " + code;
+        System.out.println(msg);
+        return msg;
     }
 
     // Эмуляция верификации:
@@ -111,7 +112,7 @@ public class MoneyTransferService {
         return (Integer.parseInt(code) > 5000);
     }
 
-    public boolean validateCardDate(String cardValdTill) {
+    public static boolean validateCardDate(String cardValdTill) {
         Date cardDate = null;
         SimpleDateFormat format = new SimpleDateFormat();
         format.applyPattern("MM/yy");

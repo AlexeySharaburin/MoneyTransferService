@@ -24,14 +24,14 @@ public class MoneyTransferController {
 
     @PostMapping("/transfer")
     public ResponseEntity<OperationIdResponse> transfer(@RequestBody TransferData transferData) {
-        String operationId = moneyTransferService.transfer(transferData);
+        String operationId = moneyTransferService.transfer(transferData, moneyTransferService.operationsRepository, moneyTransferService.verificationRepository);
         System.out.println("Транзакция подготовлена!");
         return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
     }
 
     @PostMapping("/confirmOperation")
     public ResponseEntity<OperationIdResponse> confirmOperation(@RequestBody Verification verification) {
-        String operationId = moneyTransferService.confirmOperation(verification);
+        String operationId = moneyTransferService.confirmOperation(verification, moneyTransferService.operationsRepository, moneyTransferService.verificationRepository);
         System.out.println("Транзакция завершена успешно!!");
         return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
     }
