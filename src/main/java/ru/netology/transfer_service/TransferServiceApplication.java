@@ -2,6 +2,7 @@ package ru.netology.transfer_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.netology.transfer_service.model.AmountCard;
 import ru.netology.transfer_service.model.Card;
 import ru.netology.transfer_service.repository.MoneyTransferRepository;

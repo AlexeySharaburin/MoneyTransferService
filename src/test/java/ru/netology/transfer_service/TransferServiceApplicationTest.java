@@ -1,14 +1,20 @@
-package ru.netology;
+package ru.netology.transfer_service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+
+
+
 import org.springframework.http.ResponseEntity;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +23,8 @@ public class TransferServiceApplicationTest {
 
 
     private final String HOST = "http://localhost:";
+
+
     @Autowired
     TestRestTemplate restTemplate;
 
@@ -26,7 +34,7 @@ public class TransferServiceApplicationTest {
 
     @Container
     public static GenericContainer<?> front_app = new GenericContainer<>("front_transfer:3.0")
-            .withExposedPorts(3080);
+            .withExposedPorts(3000);
 
     @BeforeAll
     public static void setUp() {
@@ -45,7 +53,8 @@ public class TransferServiceApplicationTest {
         System.out.println(forEntity_back_app.getBody());
 //        String msgExpected1 = "";
 //        String msg1 = forEntity1.getBody();
-//        Assertions.assertEquals(msg1, msgExpected1);
+//        System.out.println("Контейнер back_transfer:3.0 работает?");
+        Assertions.assertTrue(back_app.isRunning());
     }
 
     @Test
@@ -59,6 +68,7 @@ public class TransferServiceApplicationTest {
 //        String msgExpected1 = "";
 //        String msg1 = forEntity1.getBody();
 //        Assertions.assertEquals(msg1, msgExpected1);
+        Assertions.assertTrue(front_app.isRunning());
     }
 
 }

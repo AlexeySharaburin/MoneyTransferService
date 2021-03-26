@@ -1,4 +1,4 @@
-package ru.netology.service;
+package ru.netology.transfer_service.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
