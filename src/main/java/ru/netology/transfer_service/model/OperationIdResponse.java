@@ -14,4 +14,11 @@ public class OperationIdResponse {
     public void setOperationId(String operationId) {
         this.operationId = operationId;
     }
+
+    @Override
+    public String toString() {
+        return "OperationIdResponse{" +
+                "operationId='" + operationId + '\'' +
+                '}';
+    }
 }

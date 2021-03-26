@@ -26,7 +26,8 @@ public class TransferServiceApplicationTest {
 
     @Container
     public static GenericContainer<?> front_app = new GenericContainer<>("front_transfer:3.0")
-            .withExposedPorts(3000);
+            .withExposedPorts(3000
+            );
 
     @BeforeAll
     public static void setUp() {
@@ -49,7 +50,7 @@ public class TransferServiceApplicationTest {
     @Test
     void context_front() {
 
-        var port_front = back_app.getMappedPort(3000);
+        var port_front = back_app.getMappedPort(5500);
         ResponseEntity<String> forEntity_front_app = restTemplate.getForEntity(HOST + port_front + "/profile", String.class);
 
         System.out.println("\nPort MoneyTransferService: " + port_front);
