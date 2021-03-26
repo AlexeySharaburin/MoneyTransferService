@@ -32,7 +32,7 @@ public class MoneyTransferController {
     @PostMapping("/confirmOperation")
     public ResponseEntity<OperationIdResponse> confirmOperation(@RequestBody Verification verification) {
         String operationId = moneyTransferService.confirmOperation(verification, moneyTransferService.operationsRepository, moneyTransferService.verificationRepository);
-        System.out.println("Транзакция завершена успешно!!");
+        System.out.println("Транзакция завершена успешно!");
         return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
     }
 

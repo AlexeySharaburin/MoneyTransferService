@@ -2,21 +2,14 @@ package ru.netology.transfer_service.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import ru.netology.transfer_service.TransferServiceApplication;
 import ru.netology.transfer_service.model.*;
 import ru.netology.transfer_service.repository.MoneyTransferRepository;
-import ru.netology.transfer_service.service.MoneyTransferLogConsole;
-import ru.netology.transfer_service.service.MoneyTransferLogFile;
-import ru.netology.transfer_service.service.MoneyTransferService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class MoneyTransferServiceTest {
 
@@ -29,6 +22,7 @@ public class MoneyTransferServiceTest {
 
         Map<String, DataOperation> operationsRepositoryMock = Mockito.mock(Map.class);
         Map<String, String> verificationRepositoryMock = Mockito.mock(Map.class);
+        Map<String, Card> cardRepositoryMock = Mockito.mock(Map.class);
 
         BigDecimal testCardValue = BigDecimal.valueOf(203_345.15);
         Card testCard = new Card("1111111111111111",
@@ -60,7 +54,8 @@ public class MoneyTransferServiceTest {
 
         String testCode = "7777";
 
-        Mockito.when(moneyTransferRepositoryMock.transfer(testTransferData))
+
+        Mockito.when(moneyTransferRepositoryMock.transfer(testTransferData, cardRepositoryMock))
                 .thenReturn(testDataOperation);
         Mockito.when(moneyTransferLogConsoleMock.transferLog(operationsLogs))
                 .thenReturn(true);

@@ -115,4 +115,15 @@ public class DataOperation {
     public void setTransferValue(BigDecimal transferValue) {
         this.transferValue = transferValue;
     }
+
+    @Override
+    public String toString() {
+        return "DataOperation{" +
+                "card=" + card +
+                ", cardToNumber='" + cardToNumber + '\'' +
+                ", transferValue=" + transferValue +
+                ", value=" + value +
+                ", fee=" + fee +
+                '}';
+    }
 }

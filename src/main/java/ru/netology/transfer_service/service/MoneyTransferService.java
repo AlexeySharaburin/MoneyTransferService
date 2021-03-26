@@ -42,7 +42,7 @@ public class MoneyTransferService {
         String cardValidTill = transferData.getCardFromValidTill();
 
         if (validateCardDate(cardValidTill)) {
-            DataOperation dataNewOperation = moneyTransferRepository.transfer(transferData);
+            DataOperation dataNewOperation = moneyTransferRepository.transfer(transferData, MoneyTransferRepository.cardsRepository);
             if (dataNewOperation != null) {
                 operationId = "Bn@Operation#000" + idNumber.getAndIncrement();
                 operationsRepository.put(operationId, dataNewOperation);
