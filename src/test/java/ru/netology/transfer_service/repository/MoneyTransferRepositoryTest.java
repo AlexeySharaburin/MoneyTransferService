@@ -42,7 +42,7 @@ public class MoneyTransferRepositoryTest {
     void testAcceptData() {
         DataOperation expectedDataOperation = new DataOperation(testCard, testCardToNumber, transferValue, newValueCardFrom, fee);
         DataOperation resultDataOperation = MoneyTransferRepository.acceptData(testCard, testTransferData);
-        Assertions.assertEquals(expectedDataOperation.toString(), resultDataOperation.toString());
+        Assertions.assertEquals(expectedDataOperation, resultDataOperation);
     }
 
     @Before
@@ -55,7 +55,7 @@ public class MoneyTransferRepositoryTest {
         fillMap();
         DataOperation expectedDataOperation = new DataOperation(testCard, testCardToNumber, transferValue, newValueCardFrom, fee);
         DataOperation resultDataOperation = new MoneyTransferRepository().transfer(testTransferData, testCardsRepository);
-        Assertions.assertEquals(expectedDataOperation.toString(), resultDataOperation.toString());
+        Assertions.assertEquals(expectedDataOperation, resultDataOperation);
     }
 
     @Test

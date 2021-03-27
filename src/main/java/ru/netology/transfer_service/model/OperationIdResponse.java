@@ -1,5 +1,7 @@
 package ru.netology.transfer_service.model;
 
+import java.util.Objects;
+
 public class OperationIdResponse {
     private String operationId;
 
@@ -21,4 +23,13 @@ public class OperationIdResponse {
                 "operationId='" + operationId + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OperationIdResponse that = (OperationIdResponse) o;
+        return operationId.equals(that.operationId);
+    }
+
 }

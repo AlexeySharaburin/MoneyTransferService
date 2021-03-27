@@ -34,6 +34,7 @@ public class MoneyTransferRepository {
 
     public boolean confirmOperation(Card currentCard, String operationId) {
         if (operationId != null) {
+
             cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
             return true;
         }

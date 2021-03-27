@@ -50,6 +50,7 @@ class MoneyTransferControllerTest {
     String testOperationId = "Bn@Operation#0001";
     String testCode = "7777";
 
+
     @Test
     void testOperationIdTransferController() {
 
@@ -60,6 +61,22 @@ class MoneyTransferControllerTest {
         OperationIdResponse resultResponse = new OperationIdResponse(moneyTransferServiceMock.transfer(testTransferData, operationsRepositoryMock, verificationRepositoryMock));
 
         Assertions.assertEquals(expectedResponse.toString(), resultResponse.toString());
+    }
+
+
+    @Test
+    void testTransferController() {
+
+        Mockito.when(moneyTransferServiceMock.transfer(testTransferData, operationsRepositoryMock, verificationRepositoryMock))
+                .thenReturn(testOperationId);
+
+        System.out.println(moneyTransferServiceMock.transfer(testTransferData, operationsRepositoryMock, verificationRepositoryMock));
+
+        ResponseEntity<OperationIdResponse> expected = new ResponseEntity<>((new OperationIdResponse(testOperationId)), HttpStatus.OK);
+        ResponseEntity<OperationIdResponse> result = new MoneyTransferController(moneyTransferServiceMock).transfer(testTransferData);
+
+        Assertions.assertEquals(expected, result);
+
     }
 
 
@@ -76,23 +93,22 @@ class MoneyTransferControllerTest {
 
         Assertions.assertEquals(expectedResponse.toString(), resultResponse.toString());
     }
+
 }
 
 
+//    Map<String, DataOperation> operationsRepository = new HashMap<>();
+//    Map<String, String> verificationRepository = new HashMap<>();
+
+//        operationsRepository.put(testOperationId, testDataOperation);
+//        verificationRepository.put(testOperationId, testCode);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+//    @Before
+//    public void fillMap() {
+//        operationsRepository.put(testOperationId, testDataOperation);
+//        verificationRepository.put(testOperationId, testCode);
+//    }
 
 
 //    @Test
@@ -109,28 +125,16 @@ class MoneyTransferControllerTest {
 //    void confirmOperation() {
 //
 //        Verification testVerification = new Verification(testOperationId, testCode);
+//
 //        Mockito.when(moneyTransferServiceMock.confirmOperation(testVerification, operationsRepositoryMock, verificationRepositoryMock))
 //                .thenReturn(testOperationId);
 //
 //        ResponseEntity<OperationIdResponse> expected = new ResponseEntity<>((new OperationIdResponse(testOperationId)), HttpStatus.OK);
 //
-//        ResponseEntity<OperationIdResponse> result = new MoneyTransferController(moneyTransferServiceMock).confirmOperation(testVerification, operationsRepositoryMock, verificationRepositoryMock);
+//        ResponseEntity<OperationIdResponse> result = new MoneyTransferController(moneyTransferServiceMock).confirmOperation(testVerification);
 //
 //        Assertions.assertEquals(expected, result);
 //
 //    }
-
-
-//    @Test
-//    void testTransferController() {
 //
 //
-//        Mockito.when(moneyTransferServiceMock.transfer(testTransferData, operationsRepositoryMock, verificationRepositoryMock))
-//                .thenReturn(testOperationId);
-//
-//        ResponseEntity<OperationIdResponse> expected = new ResponseEntity<>((new OperationIdResponse(testOperationId)), HttpStatus.OK);
-//        ResponseEntity<OperationIdResponse> result = new MoneyTransferController(moneyTransferServiceMock).transfer(testTransferData);
-//
-//        Assertions.assertEquals(expected, result);
-//
-//    }

@@ -1,6 +1,7 @@
 package ru.netology.transfer_service.model;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 //public class DataOperation {
 //
@@ -126,4 +127,13 @@ public class DataOperation {
                 ", fee=" + fee +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DataOperation that = (DataOperation) o;
+        return card.equals(that.card) && cardToNumber.equals(that.cardToNumber) && transferValue.equals(that.transferValue) && value.equals(that.value) && fee.equals(that.fee);
+    }
+
 }
