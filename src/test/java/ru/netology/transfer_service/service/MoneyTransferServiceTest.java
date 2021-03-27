@@ -89,7 +89,8 @@ public class MoneyTransferServiceTest {
     @Before
     public void mockConfirm() {
 
-        Mockito.when(moneyTransferRepositoryMock.confirmOperation(testCard, testOperationId))
+//        Mockito.when(moneyTransferRepositoryMock.confirmOperation(testCard, testOperationId, testCardToNumber))
+        Mockito.when(moneyTransferRepositoryMock.confirmOperation(testCard, testOperationId, testCardToNumber))
                 .thenReturn(true);
         Mockito.when(moneyTransferLogConsoleMock.transferLog(operationsLogs))
                 .thenReturn(true);

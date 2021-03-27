@@ -67,8 +67,8 @@ public class MoneyTransferService {
             String code = verificationRepository.get(operationId);
             if (code != null && isCodeCorrect(code)) {
                 DataOperation currentDataOperation = operationsRepository.get(operationId);
-                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId)) {
-//                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId, currentDataOperation.getCardToNumber())) {
+//                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId)) {
+                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId, currentDataOperation.getCardToNumber())) {
                     System.out.println("Транзакция подтверждена!");
                     String operationLogs = writeStringLog(operationId, currentDataOperation);
                     synchronized (moneyTransferLogFile) {

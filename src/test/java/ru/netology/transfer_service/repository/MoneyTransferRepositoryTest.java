@@ -61,7 +61,8 @@ public class MoneyTransferRepositoryTest {
     @Test
     void testConfirmOperationRepository() {
         Boolean expectedConfirm = true;
-        Boolean resultConfirm = new MoneyTransferRepository().confirmOperation(testCard, testOperationId);
+//        Boolean resultConfirm = new MoneyTransferRepository().confirmOperation(testCard, testOperationId);
+        Boolean resultConfirm = new MoneyTransferRepository().confirmOperation(testCard, testOperationId, testCardToNumber);
         Assertions.assertEquals(expectedConfirm, resultConfirm);
     }
 }

@@ -47,8 +47,10 @@ class MoneyTransferControllerTest {
             .setScale(2, RoundingMode.CEILING);
 
     DataOperation testDataOperation = new DataOperation(testCard, testCardToNumber, transferValue, newValueCardFrom, fee);
+
     String testOperationId = "Bn@Operation#0001";
     String testCode = "7777";
+    Verification testVerification = new Verification(testOperationId, testCode);
 
 
     @Test

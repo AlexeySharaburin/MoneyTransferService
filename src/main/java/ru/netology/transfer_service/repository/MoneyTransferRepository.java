@@ -32,14 +32,27 @@ public class MoneyTransferRepository {
     }
 
 
-    public boolean confirmOperation(Card currentCard, String operationId) {
+    public boolean confirmOperation(Card currentCard, String operationId, String cardToNumber) {
         if (operationId != null) {
-
-            cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
-            return true;
+            String cardFromNumber = currentCard.getCardFromNumber();
+            synchronized (cardFromNumber) {
+                synchronized (cardToNumber) {
+                    cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
+                    return true;
+                }
+            }
         }
         return false;
     }
+
+//    public boolean confirmOperation(Card currentCard, String operationId) {
+//        if (operationId != null) {
+//
+//            cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
+//            return true;
+//        }
+//        return false;
+//    }
 
 
     public static DataOperation acceptData(Card currentCard, TransferData transferData) {
@@ -81,28 +94,6 @@ public class MoneyTransferRepository {
         return dataNewOperation;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //
