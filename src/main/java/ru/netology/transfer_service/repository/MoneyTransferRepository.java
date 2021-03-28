@@ -1,10 +1,9 @@
 package ru.netology.transfer_service.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.netology.transfer_service.exception.ErrorInputData;
-import ru.netology.transfer_service.model.Card;
-import ru.netology.transfer_service.model.DataOperation;
-import ru.netology.transfer_service.model.TransferData;
+import ru.netology.transfer_service.model.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,9 +13,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class MoneyTransferRepository {
 
-    public final static Map<String, Card> cardsRepository = new ConcurrentHashMap<>();
+    public static Map<String, Card> cardsRepository = new ConcurrentHashMap<>();
 
-    public DataOperation transfer(TransferData transferData, Map<String, Card> cardsRepository) {
+    @Autowired
+    private MoneyTransferRepository() {
+    }
+
+    public MoneyTransferRepository(Map<String, Card> cardsRepository) {
+        this.cardsRepository = cardsRepository;
+    }
+
+    public DataOperation transfer(TransferData transferData) {
         Card currentCard;
         DataOperation dataNewOperation = null;
 
@@ -32,27 +39,31 @@ public class MoneyTransferRepository {
     }
 
 
-    public boolean confirmOperation(Card currentCard, String operationId, String cardToNumber) {
+    public boolean confirmOperation(String operationId, DataOperation dataOperation) {
         if (operationId != null) {
-            String cardFromNumber = currentCard.getCardFromNumber();
+            String cardFromNumber = dataOperation.getCard().getCardFromNumber();
+            String cardToNumber = dataOperation.getCardToNumber();
             synchronized (cardFromNumber) {
                 synchronized (cardToNumber) {
-                    cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
+                    Card currentCard = dataOperation.getCard();
+                    BigDecimal newValueCardFrom = dataOperation.getValue();
+                    currentCard.setAmountCard(new AmountCard(newValueCardFrom, "RUR"));
+                    cardsRepository.put(cardFromNumber, currentCard);
+                    if (cardsRepository.containsKey(cardToNumber)) {
+                        Card cardTo = cardsRepository.get(cardToNumber);
+                        BigDecimal valueCardTo = cardTo.getAmountCard().getValue();
+                        BigDecimal transferValue = dataOperation.getTransferValue();
+                        BigDecimal newValueCardTo = valueCardTo.add(transferValue)
+                                .setScale(2, RoundingMode.CEILING);
+                        cardTo.setAmountCard(new AmountCard(newValueCardTo, "RUR"));
+                        cardsRepository.put(cardToNumber, cardTo);
+                    }
                     return true;
                 }
             }
         }
         return false;
     }
-
-//    public boolean confirmOperation(Card currentCard, String operationId) {
-//        if (operationId != null) {
-//
-//            cardsRepository.put(currentCard.getCardFromNumber(), currentCard);
-//            return true;
-//        }
-//        return false;
-//    }
 
 
     public static DataOperation acceptData(Card currentCard, TransferData transferData) {
@@ -94,6 +105,51 @@ public class MoneyTransferRepository {
         return dataNewOperation;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//@Repository
+//public class MoneyTransferRepository {
+//
+//    public final static Map<String, Card> cardsRepository = new ConcurrentHashMap<>();
+//
+//    public DataOperation transfer(TransferData transferData, Map<String, Card> cardsRepository) {
+//        Card currentCard;
+//        DataOperation dataNewOperation = null;
+//
+//        for (Map.Entry<String, Card> cardRepoEntry : cardsRepository.entrySet()) {
+//
+//            if (transferData.getCardFromNumber().equals(cardRepoEntry.getKey())) {
+//
+//                currentCard = cardRepoEntry.getValue();
+//                dataNewOperation = acceptData(currentCard, transferData);
+//            }
+//        }
+//        return dataNewOperation;
+//    }
 
 
 //

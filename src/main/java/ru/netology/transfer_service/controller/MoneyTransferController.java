@@ -24,14 +24,14 @@ public class MoneyTransferController {
 
     @PostMapping("/transfer")
     public ResponseEntity<OperationIdResponse> transfer(@RequestBody TransferData transferData) {
-        String operationId = moneyTransferService.transfer(transferData, moneyTransferService.operationsRepository, moneyTransferService.verificationRepository);
+        String operationId = moneyTransferService.transfer(transferData);
         System.out.println("Транзакция подготовлена!");
         return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
     }
 
     @PostMapping("/confirmOperation")
     public ResponseEntity<OperationIdResponse> confirmOperation(@RequestBody Verification verification) {
-        String operationId = moneyTransferService.confirmOperation(verification, moneyTransferService.operationsRepository, moneyTransferService.verificationRepository);
+        String operationId = moneyTransferService.confirmOperation(verification);
         System.out.println("Транзакция завершена успешно!");
         return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
     }
@@ -57,7 +57,9 @@ public class MoneyTransferController {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), 500), HttpStatus.NOT_FOUND);
     }
 
+
 }
+
 
 
 
@@ -97,3 +99,29 @@ public class MoneyTransferController {
 //        System.out.println("Операция отклонена!");
 //        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 //    }
+//    @PostMapping("/transfer")
+//    public OperationIdResponse transfer(@RequestBody TransferData transferData) {
+//        String operationId = moneyTransferService.transfer(transferData, moneyTransferService.operationsRepository, moneyTransferService.verificationRepository);
+////        this.setOperationId(operationId);
+////        System.out.println("Транзакция подготовлена!");
+////        System.out.println(operationId);
+////        this.setOperationIdResponse(new OperationIdResponse(operationId));
+////        System.out.println(this.operationIdResponse.toString());
+////        System.out.println(this.getOperationId());
+////        System.out.println(this.getOperationIdResponse());
+////        OperationIdResponse operationIdResponse= new OperationIdResponse(operationId);
+////        return this.getOperationIdResponse();
+//        return new OperationIdResponse(operationId);
+////        return new ResponseEntity<>(new OperationIdResponse(operationId), HttpStatus.OK);
+//    }
+//    public String getOperationId() {
+//        return operationId;
+//    }
+//
+//    public void setOperationId(String operationId) {
+//        this.operationId = operationId;
+//    }
+
+//
+//    private OperationIdResponse operationIdResponse;
+//    private String operationId;

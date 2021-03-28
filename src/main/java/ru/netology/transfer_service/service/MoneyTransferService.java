@@ -1,5 +1,6 @@
 package ru.netology.transfer_service.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.netology.transfer_service.TransferServiceApplication;
 import ru.netology.transfer_service.exception.ErrorConfirmation;
@@ -22,18 +23,37 @@ public class MoneyTransferService {
     private final MoneyTransferRepository moneyTransferRepository;
     private final MoneyTransferLogConsole moneyTransferLogConsole;
 
-    public MoneyTransferService(MoneyTransferLogFile moneyTransferLogFile, MoneyTransferRepository moneyTransferRepository, MoneyTransferLogConsole moneyTransferLogConsole) {
+
+    @Autowired
+    public MoneyTransferService(MoneyTransferLogFile moneyTransferLogFile,
+                                MoneyTransferRepository moneyTransferRepository,
+                                MoneyTransferLogConsole moneyTransferLogConsole) {
         this.moneyTransferLogFile = moneyTransferLogFile;
         this.moneyTransferRepository = moneyTransferRepository;
         this.moneyTransferLogConsole = moneyTransferLogConsole;
     }
 
-    public final Map<String, DataOperation> operationsRepository = new ConcurrentHashMap<>();
+
+    public Map<String, DataOperation> operationsRepository = new ConcurrentHashMap<>();
     final private AtomicInteger idNumber = new AtomicInteger(1);
-    public final Map<String, String> verificationRepository = new ConcurrentHashMap<>();
+    public Map<String, String> verificationRepository = new ConcurrentHashMap<>();
 
 
-    public String transfer(TransferData transferData, Map<String, DataOperation> operationsRepository, Map<String, String> verificationRepository) {
+    public MoneyTransferService(MoneyTransferLogFile moneyTransferLogFile,
+                                MoneyTransferRepository moneyTransferRepository,
+                                MoneyTransferLogConsole moneyTransferLogConsole,
+                                Map<String, DataOperation> operationsRepository,
+                                Map<String, String> verificationRepository) {
+
+        this.moneyTransferLogFile = moneyTransferLogFile;
+        this.moneyTransferRepository = moneyTransferRepository;
+        this.moneyTransferLogConsole = moneyTransferLogConsole;
+        this.verificationRepository = verificationRepository;
+        this.operationsRepository = operationsRepository;
+    }
+
+
+    public String transfer(TransferData transferData) {
         String operationId;
         String code = generateCode();
         String logData = "Ошибка ввода данных карты";
@@ -42,7 +62,7 @@ public class MoneyTransferService {
         String cardValidTill = transferData.getCardFromValidTill();
 
         if (validateCardDate(cardValidTill)) {
-            DataOperation dataNewOperation = moneyTransferRepository.transfer(transferData, MoneyTransferRepository.cardsRepository);
+            DataOperation dataNewOperation = moneyTransferRepository.transfer(transferData);
             if (dataNewOperation != null) {
                 operationId = "Bn@Operation#000" + idNumber.getAndIncrement();
                 operationsRepository.put(operationId, dataNewOperation);
@@ -59,7 +79,7 @@ public class MoneyTransferService {
         return operationId;
     }
 
-    public String confirmOperation(Verification verification, Map<String, DataOperation> operationsRepository, Map<String, String> verificationRepository) {
+    public String confirmOperation(Verification verification) {
         String operationId = verification.getOperationId();
         String logCode = "Неверный код подтверждения";
         String logId = "Транзакция отклонена!";
@@ -67,8 +87,7 @@ public class MoneyTransferService {
             String code = verificationRepository.get(operationId);
             if (code != null && isCodeCorrect(code)) {
                 DataOperation currentDataOperation = operationsRepository.get(operationId);
-//                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId)) {
-                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId, currentDataOperation.getCardToNumber())) {
+                if (moneyTransferRepository.confirmOperation(operationId, currentDataOperation)) {
                     System.out.println("Транзакция подтверждена!");
                     String operationLogs = writeStringLog(operationId, currentDataOperation);
                     synchronized (moneyTransferLogFile) {
@@ -167,21 +186,65 @@ public class MoneyTransferService {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//
+//    public String transfer(TransferData transferData, Map<String, DataOperation> operationsRepository, Map<String, String> verificationRepository) {
+//        String operationId;
+//        String code = generateCode();
+//        String logData = "Ошибка ввода данных карты";
+//        String logTime = "Срок действия вашей карты истёк";
+//
+//        String cardValidTill = transferData.getCardFromValidTill();
+//
+//        if (validateCardDate(cardValidTill)) {
+//            DataOperation dataNewOperation = moneyTransferRepository.transfer(transferData, MoneyTransferRepository.cardsRepository);
+//            if (dataNewOperation != null) {
+//                operationId = "Bn@Operation#000" + idNumber.getAndIncrement();
+//                operationsRepository.put(operationId, dataNewOperation);
+//                verificationRepository.put(operationId, code);
+//                sendCodeToPhone(code);
+//            } else {
+//                throw new ErrorInputData(logData);
+//            }
+//        } else {
+//            System.out.println(logTime);
+//            throw new ErrorInputData(logTime);
+//        }
+//
+//        return operationId;
+//    }
+//
+//    public String confirmOperation(Verification verification, Map<String, DataOperation> operationsRepository, Map<String, String> verificationRepository) {
+//        String operationId = verification.getOperationId();
+//        String logCode = "Неверный код подтверждения";
+//        String logId = "Транзакция отклонена!";
+//        if (verificationRepository.containsKey(operationId) && operationId != null) {
+//            String code = verificationRepository.get(operationId);
+//            if (code != null && isCodeCorrect(code)) {
+//                DataOperation currentDataOperation = operationsRepository.get(operationId);
+////                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId)) {
+//                if (moneyTransferRepository.confirmOperation(currentDataOperation.getCard(), operationId, currentDataOperation.getCardToNumber())) {
+//                    System.out.println("Транзакция подтверждена!");
+//                    String operationLogs = writeStringLog(operationId, currentDataOperation);
+//                    synchronized (moneyTransferLogFile) {
+//                        if (moneyTransferLogFile.transferLog(operationLogs)
+//                                && moneyTransferLogConsole.transferLog(operationLogs)) {
+//                            System.out.println("Вся информация о транзакции передана клиенту");
+//                        }
+//                    }
+//                } else {
+//                    System.out.println(logId);
+//                    throw new ErrorConfirmation(logId);
+//                }
+//            } else {
+//                System.out.println(logCode);
+//                throw new ErrorConfirmation(logCode);
+//            }
+//        } else {
+//            System.out.println(logId);
+//            throw new ErrorConfirmation(logId);
+//        }
+//        return operationId;
+//    }
 
 
 //    public String transferMoneyServiceLog(TransferData transferData) {
