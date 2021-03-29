@@ -35,13 +35,10 @@ public class TransferServiceApplicationTest {
         front_app.start();
     }
 
-
     @Test
     void context_back() {
-
         var port_back = back_app.getMappedPort(5500);
         ResponseEntity<String> forEntity_back_app = restTemplate.getForEntity(HOST + port_back + "/profile", String.class);
-
         System.out.println("\nPort MoneyTransferService: " + port_back);
         System.out.println(forEntity_back_app.getBody());
         Assertions.assertTrue(back_app.isRunning());
@@ -49,13 +46,10 @@ public class TransferServiceApplicationTest {
 
     @Test
     void context_front() {
-
         var port_front = back_app.getMappedPort(5500);
         ResponseEntity<String> forEntity_front_app = restTemplate.getForEntity(HOST + port_front + "/profile", String.class);
-
         System.out.println("\nPort MoneyTransferService: " + port_front);
         System.out.println(forEntity_front_app.getBody());
         Assertions.assertTrue(front_app.isRunning());
     }
-
 }

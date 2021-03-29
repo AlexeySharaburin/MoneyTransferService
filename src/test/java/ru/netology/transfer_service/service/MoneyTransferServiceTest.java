@@ -54,9 +54,10 @@ public class MoneyTransferServiceTest {
     String testOperationId = "Bn@Operation#0001";
     String testCode = "7777";
 
+    Verification testVerification = new Verification(testOperationId, testCode);
+
     @BeforeEach
     public void mockBeforeEach() {
-
         Mockito.when(operationsRepositoryMock.get(testOperationId))
                 .thenReturn(testDataOperation);
         Mockito.when(verificationRepositoryMock.containsKey(testOperationId))
@@ -71,7 +72,6 @@ public class MoneyTransferServiceTest {
 
     @Before
     public void mockTransfer() {
-
         Mockito.when(moneyTransferRepositoryMock.transfer(testTransferData))
                 .thenReturn(testDataOperation);
     }
@@ -79,33 +79,22 @@ public class MoneyTransferServiceTest {
 
     @Test
     void testTransferService() {
-
         mockTransfer();
-
         String resultOperationId = moneyTransferService.transfer(testTransferData);
-
         Assertions.assertEquals(testOperationId, resultOperationId);
-
     }
 
     @Before
     public void mockConfirm() {
-
         Mockito.when(moneyTransferRepositoryMock.confirmOperation(testOperationId, testDataOperation))
                 .thenReturn(true);
     }
 
     @Test
     void testConfirmOperationService() {
-
         mockConfirm();
-
-        Verification testVerification = new Verification(testOperationId, testCode);
-
         String resultOperationId = moneyTransferService.confirmOperation(testVerification);
-
         String expectedOperationId = "Bn@Operation#0001";
-
         Assertions.assertEquals(expectedOperationId, resultOperationId);
     }
 

@@ -10,9 +10,9 @@ public class Amount {
 
     @NotNull(message = "Необходимо ввести сумму перевода")
     @Size(min = 0, message = "Сумма перевода не может быть меньше или равна 0")
-    private int value;
+    private final int value;
 
-    private String currency;
+    private final String currency;
 
     public Amount(int value, String currency) {
         this.value = value;
@@ -21,18 +21,6 @@ public class Amount {
 
     public int getValue() {
         return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 
     @Override

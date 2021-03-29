@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 public class AmountCard {
 
-    private BigDecimal value;
-    private String currency;
+    private final BigDecimal value;
+    private final String currency;
 
     public AmountCard(BigDecimal value, String currency) {
         this.value = value;
@@ -16,16 +16,8 @@ public class AmountCard {
         return value;
     }
 
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
-
     public String getCurrency() {
         return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 
     @Override

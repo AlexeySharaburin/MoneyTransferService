@@ -1,7 +1,5 @@
 package ru.netology.transfer_service.model;
 
-import java.util.Objects;
-
 public class OperationIdResponse {
     private String operationId;
 
